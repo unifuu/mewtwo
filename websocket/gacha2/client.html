@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gacha Simulator (20 Pulls Total)</title>
+<style>
+body { background:#121212; color:#e0e0e0; font-family:Arial,sans-serif; display:flex; justify-content:center; margin:0; padding:20px;}
+.container { width:100%; max-width:400px; }
+h2 { text-align:center; color:#bb86fc; }
+#log { background:#1e1e1e; border-radius:8px; padding:10px; height:400px; overflow-y:auto; margin-bottom:10px; }
+button { width:48%; padding:10px; border:none; border-radius:6px; background:#bb86fc; color:#121212; font-weight:bold; cursor:pointer; transition:0.2s; margin:1%; }
+button:hover { background:#9b66e6; }
+p { margin:4px 0; }
+.btn-row { display:flex; justify-content:space-between; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>🎴 Gacha Simulator</h2>
+  <div id="log"></div>
+  <div class="btn-row">
+    <button onclick="pullGacha1()">Pull 1</button>
+    <button onclick="pullGacha10()">Pull 10</button>
+  </div>
+</div>
+
+<script>
+let sessionID = localStorage.getItem("sessionID");
+if (!sessionID) {
+  sessionID = "user_" + Math.floor(Math.random()*1000000);
+  localStorage.setItem("sessionID", sessionID);
+}
+
+let socket;
+
+function connect() {
+  socket = new WebSocket(`ws://localhost:8080/ws?session=${sessionID}`);
+
+  socket.onopen = () => console.log("Connected to server");
+  socket.onmessage = (event) => {
+    const p = document.createElement("p");
+    p.innerText = event.data;
+    document.getElementById("log").appendChild(p);
+    document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
+  };
+
+  socket.onclose = () => {
+    console.log("Disconnected. Reconnecting in 2s...");
+    setTimeout(connect, 2000);
+  };
+}
+
+connect();
+
+function pullGacha1() {
+  if (socket.readyState === WebSocket.OPEN) socket.send("pull1");
+  else alert("Not connected!");
+}
+
+function pullGacha10() {
+  if (socket.readyState === WebSocket.OPEN) socket.send("pull10");
+  else alert("Not connected!");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gacha Simulator</title>
+<style>
+  body { background:#121212; color:#e0e0e0; font-family:Arial,sans-serif; display:flex; justify-content:center; margin:0; padding:20px;}
+  .container { width:100%; max-width:400px; }
+  h2 { text-align:center; color:#bb86fc; }
+  #log { background:#1e1e1e; border-radius:8px; padding:10px; height:300px; overflow-y:auto; margin-bottom:10px; }
+  button { width:100%; padding:10px; border:none; border-radius:6px; background:#bb86fc; color:#121212; font-weight:bold; cursor:pointer; transition:0.2s; }
+  button:hover { background:#9b66e6; }
+  p { margin:4px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>🎴 Gacha Simulator</h2>
+  <div id="log"></div>
+  <button onclick="pullGacha()">Pull</button>
+</div>
+<script>
+  const socket = new WebSocket("ws://localhost:8080/ws");
+  const log = document.getElementById("log");
+
+  socket.onmessage = (event) => {
+    const p = document.createElement("p");
+    p.innerText = event.data;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+  };
+
+  function pullGacha() {
+    socket.send("pull");
+  }
+</script>
+</body>
+</html>

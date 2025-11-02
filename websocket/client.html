@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket Chat Room</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #bb86fc;
+    }
+
+    #chat {
+      background-color: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .input-row {
+      display: flex;
+      width: 100%;
+      max-width: 620px;
+    }
+
+    #msg {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 6px 0 0 6px;
+      background: #2c2c2c;
+      color: #e0e0e0;
+      outline: none;
+    }
+
+    #msg::placeholder {
+      color: #888;
+    }
+
+    button {
+      padding: 10px 30px;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      background-color: #bb86fc;
+      color: #121212;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #9b66e6;
+    }
+
+    p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat"></div>
+  <div class="input-row">
+    <input id="msg" type="text" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const socket = new WebSocket("ws://localhost:8080/ws");
+    const chat = document.getElementById("chat");
+    const msgInput = document.getElementById("msg");
+
+    socket.onmessage = (event) => {
+      const p = document.createElement("p");
+      p.innerText = event.data;
+      chat.appendChild(p);
+      chat.scrollTop = chat.scrollHeight; // auto scroll
+    };
+
+    function sendMessage() {
+      const msg = msgInput.value.trim();
+      if (msg) {
+        socket.send(msg);
+        msgInput.value = "";
+      }
+    }
+
+    msgInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
