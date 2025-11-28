@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package pokemon;
+
+option go_package = "github.com/yourusername/pokemon-server/proto";
+option java_package = "dev.unifuu.grpc.proto";
+option java_multiple_files = true;
+
+// Service definition
+service PokemonService {
+  // Get Pokemon by ID or name
+  rpc GetPokemon(PokemonRequest) returns (PokemonResponse);
+  
+  // Search multiple Pokemon (optional, for future expansion)
+  rpc SearchPokemon(SearchRequest) returns (SearchResponse);
+}
+
+// Messages
+message PokemonRequest {
+  string query = 1; // Can be ID (e.g., "25") or name (e.g., "pikachu")
+}
+
+message PokemonResponse {
+  bool success = 1;
+  string message = 2;
+  Pokemon pokemon = 3;
+}
+
+message Pokemon {
+  int32 id = 1;
+  string name = 2;
+  repeated string types = 3;
+  string image_url = 4;
+  int32 height = 5;
+  int32 weight = 6;
+}
+
+message SearchRequest {
+  string query = 1;
+  int32 limit = 2;
+}
+
+message SearchResponse {
+  repeated Pokemon results = 1;
+}
