@@ -1,4 +1,6 @@
-# Microservices Application
+# Consul
+
+To learn Consul.
 
 - User Service (Port 8081): Manages user data, communicates with Order Service
 - Order Service (Port 8082): Manages orders, publishes events to RabbitMQ
